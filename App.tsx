@@ -29,17 +29,39 @@ const CircularTimer = ({ timeLeft, maxTime }: { timeLeft: number, maxTime: numbe
   const progress = timeLeft / maxTime;
   const strokeDashoffset = circumference - (progress * circumference);
   
-  const isCritical = timeLeft <= 5;
-  const isWarning = timeLeft <= 10;
+  // Logic updated per request:
+  // <= 10s: Red + Pulse
+  // 10s < t <= 20s: Yellow
+  // > 20s: Default Indigo
+  const isCritical = timeLeft <= 10;
+  const isWarning = timeLeft > 10 && timeLeft <= 20;
   
   let color = '#6366F1'; // Indigo-500
-  if (isWarning) color = '#F59E0B'; // Amber-500
-  if (isCritical) color = '#EF4444'; // Red-500
+  let textColor = 'text-indigo-600';
+  let wrapperBorderColor = 'border-white/50';
+  let shadowClass = 'shadow-lg';
+  let animationClass = '';
+  let scaleClass = '';
+
+  if (isWarning) {
+      color = '#F59E0B'; // Amber-500
+      textColor = 'text-amber-600';
+      wrapperBorderColor = 'border-amber-400';
+      shadowClass = 'shadow-amber-500/50';
+      scaleClass = 'scale-105';
+  }
+  
+  if (isCritical) {
+      color = '#EF4444'; // Red-500
+      textColor = 'text-red-600';
+      wrapperBorderColor = 'border-red-400';
+      shadowClass = 'shadow-red-500/50';
+      animationClass = 'animate-pulse';
+      scaleClass = 'scale-110';
+  }
 
   // Wrapper classes
-  let wrapperClass = `relative flex items-center justify-center bg-white/90 backdrop-blur rounded-full shadow-lg transition-transform duration-300 `;
-  if (isCritical) wrapperClass += 'animate-pulse scale-110 shadow-red-500/50 ';
-  else if (isWarning) wrapperClass += 'scale-105 shadow-amber-500/50 ';
+  const wrapperClass = `relative flex items-center justify-center bg-white/90 backdrop-blur rounded-full transition-transform duration-300 border-2 ${wrapperBorderColor} ${shadowClass} ${animationClass} ${scaleClass}`;
 
   return (
     <div className={wrapperClass}>
@@ -65,7 +87,7 @@ const CircularTimer = ({ timeLeft, maxTime }: { timeLeft: number, maxTime: numbe
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className={`font-black font-mono leading-none text-xl transition-colors ${isCritical ? 'text-red-600' : (isWarning ? 'text-amber-600' : 'text-indigo-600')}`}>
+        <span className={`font-black font-mono leading-none text-xl transition-colors ${textColor}`}>
             {timeLeft}
         </span>
       </div>
@@ -560,6 +582,16 @@ const App = () => {
             </div>
         </div>
       )}
+
+      {/* Footer */}
+      <div className="absolute bottom-1 w-full text-center z-50 pointer-events-auto pb-1">
+          <p className="text-[10px] font-bold text-gray-500/80 drop-shadow-sm uppercase tracking-wider">
+              (C) Noam Gold AI 2025
+          </p>
+          <a href="mailto:gold.noam@gmail.com" className="text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+              Send Feedback: gold.noam@gmail.com
+          </a>
+      </div>
     </div>
   );
 };

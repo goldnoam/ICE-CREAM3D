@@ -78,26 +78,29 @@ const ScoopBurst = ({ color }: { color: string }) => {
 
 const Scoop: React.FC<ScoopProps> = ({ flavor, position, scale = 1 }) => {
   const meshRef = useRef<Mesh>(null);
-  const anim = useRef(0);
+  const time = useRef(0);
 
   useFrame((state, delta) => {
-    if (anim.current < 1) {
-      anim.current += delta * 3;
-      if (anim.current > 1) anim.current = 1;
-      
-      // Pop animation: Scale 0 -> 1.15 -> 1
-      let s = anim.current;
-      let scaleMod = 1;
-      if (s < 0.7) {
-        scaleMod = (s / 0.7) * 1.15;
-      } else {
-        scaleMod = 1.15 - ((s - 0.7) / 0.3) * 0.15;
-      }
-      
-      if (meshRef.current) {
-        const final = scale * scaleMod;
+    // Add delta time
+    time.current += delta;
+    
+    if (meshRef.current) {
+        // Elastic bounce animation: 
+        // Starts at 0, overshoots 1, oscillates and settles at 1
+        // Formula: 1 - exp(-decay * t) * cos(freq * t)
+        
+        let bounce = 1;
+        
+        // Only calculate for first 2 seconds to save perf
+        if (time.current < 2.0) {
+            // Decay: 5, Frequency: 15
+            bounce = 1 - Math.exp(-time.current * 5) * Math.cos(time.current * 15);
+            // Clamp lower bound to 0 to avoid negative scale glitches in first frame
+            if (bounce < 0) bounce = 0;
+        }
+
+        const final = scale * bounce;
         meshRef.current.scale.set(final, final, final);
-      }
     }
   });
 

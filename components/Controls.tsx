@@ -56,11 +56,13 @@ export const Controls: React.FC<ControlsProps> = ({
                         style={{ backgroundColor: FLAVOR_COLORS[f] }}
                         aria-label={`Add ${f}`}
                     />
-                    {/* Enhanced Tooltip */}
+                    {/* Enhanced Tooltip with Color Swatch */}
                      <div 
-                        className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-1.5 bg-white text-gray-800 text-xs font-black rounded-lg opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-200 pointer-events-none whitespace-nowrap z-20 shadow-xl border-2" 
+                        className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-1.5 bg-white text-gray-800 text-xs font-black rounded-lg opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 group-hover:scale-100 scale-90 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 shadow-xl border-2 flex items-center gap-2" 
                         style={{ borderColor: FLAVOR_COLORS[f] }}
                     >
+                        {/* Color Swatch */}
+                        <span className="w-3 h-3 rounded-full border border-black/10 shadow-inner" style={{ backgroundColor: FLAVOR_COLORS[f] }}></span>
                         {f}
                          {/* Triangle pointing down */}
                          <div 
